@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<h1><em>The US President Elections</em></h1>
+<div id="clock">
+    <div>
+        <span class="days"></span>
+        <div class="heading">Days</div>
+    </div>
+    <div>
+        <span class="hours"></span>
+        <div class="heading">Hours</div>
+    </div>   
+    <div>
+        <span class="minutes"></span>
+        <div class="heading">Minutes</div>
+    </div>
+    <div>
+        <span class="seconds"></span>
+        <div class="heading">Seconds</div>
+    </div>
+</div>
+</body>
+<style>
+body{
+    background-image:url("http://www.worldfortravel.com/wp-content/uploads/2015/12/Inside-White-House-President.jpg");
+    text-align:center;
+    font-family:sans-serif;
+    font-weight:100;
+    }
+h1{
+    color:#191970;
+    font-size:80px;
+    font-weight:100;
+    margin: 100px 0px 50px;
+    }
+#clock{
+    font-family:sans-serif;
+    color:#800000;
+    display:inline-block;
+    font-weight:100;
+    text-align:centre; 
+    font-size:30px;
+    }
+#clock > div{
+    border-radius:5px;
+    padding:20px;
+    background:#DAA520;
+    display:inline-block;
+    }
+#clock div > span{
+    padding:35px;
+    border-radius:3px;
+    background:#FFD700;
+    display:inline-block;
+    }
+.heading{
+    padding:5px;
+    fontsize:15px;
+}
+</style>
+<script>
+function timer(endtime){
+    var d,h,s,m;
+    var t= Date.parse(endtime)-Date.parse(new Date());
+    s=Math.floor((t/1000)%60);
+    m=Math.floor((t/(1000*60))%60);
+    h=Math.floor((t/(1000*60*60))%24);    
+    d=Math.floor((t/(1000*60*60*24)));
+    return{
+    'total':t,
+    'days':d,
+    'hours':h,
+    'minutes':m,
+    'seconds':s
+        };
+}
+function renew(id,endtime){
+    var c=document.getElementById(id);
+    daysspan=c.querySelector('.days');    
+    hoursspan=c.querySelector('.hours');
+    minutesspan=c.querySelector('.minutes');
+    secondsspan=c.querySelector('.seconds');
+    
+    function update(){
+    var t=timer(endtime);
+     daysspan.innerHTML=t.days;
+    hoursspan.innerHTML=('0'+t.hours).slice(-2);
+    minutesspan.innerHTML=('0'+t.minutes).slice(-2);
+    secondsspan.innerHTML=('0'+t.seconds).slice(-2);
+    if(t.total<=0){
+        clearInterval(timeinterval);
+        }
+           }
+    update();
+    var timeinterval=setInterval(update,1000);
+}
+var deadline = new Date(2016,10,8,10,30,0,0);//For elections on November 8,2016 at 10:30 a.m.
+renew('clock', deadline);
+</script>
+</html>

@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<h1><em>Countdown Timer</em></h1>
+<p>Press <strong>"Input"</strong> buttons after entering time and then Start!!</p>
+<p id="po">Press the 'Stop' button to stop!</p>
+<input type="number" id="minutes" value="00">
+<button type="button" onclick="setminutes()">Input Minutes</button>
+<input type="number" id="seconds" value="00">
+<button type="button" onclick="setseconds()">Input Seconds</button>
+<div id="key">
+    <button type="button" onclick="start()">START</button>
+    <button type="button" onclick="getElementById('po').innerHTML='Stop'">STOP</button>
+     <!--Executes"clearInterval" when value of 'po'is 'STOP' on clicking STOP button-->
+    <button type="button" onclick="reset()">RESET</button>
+</div>
+<div id="clock">
+    <div>
+        <span class="minutes"></span>
+        <div class="heading">Minutes</div>
+    </div>
+    <div>
+        <span class="seconds"></span>
+        <div class="heading">Seconds</div>
+    </div>
+</div>
+</body>
+<style>
+body{
+    background-image:url("http://www.gamepur.com/files/imagepicker/6/watch-dogs-screenshot-showing-chicago-city-in-nightime.jpg");
+    text-align:center;
+    font-family:sans-serif;
+    font-weight:100;
+    color:#1E90FF;
+    font-size:20px;
+    }
+h1{
+    color:#1E90FF;
+    font-size:80px;
+    font-weight:100;
+    margin: 100px 0px 50px;
+    }
+#key{
+    display:block;
+    padding:30px;
+    }
+#clock{
+    font-family:sans-serif;
+    color:#800000;
+    display:inline-block;
+    font-weight:100;
+    text-align:centre; 
+    font-size:30px;
+    }
+#clock > div{
+    border-radius:5px;
+    padding:20px;
+    background:#191970;
+    display:inline-block;
+    }
+#clock div > span{
+    padding:35px;
+    border-radius:3px;
+    background:black;
+    display:inline-block;
+    }
+.heading{
+    padding:5px;
+    fontsize:15px;
+}
+</style>
+<script>
+var x=0;
+function setminutes(){
+    x+=(document.getElementById('minutes').value)*60*1000;
+}
+function setseconds(){
+    x+=(document.getElementById('seconds').value)*1000;
+}
+function start(){
+y=Date.parse(Date())+x;
+function timer(){
+    var d,h,s,m;
+    var t=Math.abs(y-Date.parse(Date()));//To enable time going negative if beyond limit
+    s=Math.floor((t/1000)%60);
+    m=Math.floor((t/(1000*60))%60);
+    return{
+    'total':t,
+    'minutes':m,
+    'seconds':s
+        };
+}
+function renew(id){
+    var c=document.getElementById(id);
+    minutesspan=c.querySelector('.minutes');
+    secondsspan=c.querySelector('.seconds');
+    
+    function update(){
+        var t=timer();
+        if(y>=Date.parse(Date())){
+            minutesspan.innerHTML=('0'+t.minutes).slice(-2);
+	    }
+	else{
+	    minutesspan.innerHTML='-'+(('0'+t.minutes).slice(-2));//time crossed deadline,so -ve time.
+	    }
+        secondsspan.innerHTML=('0'+t.seconds).slice(-2);
+        if(document.getElementById("po").innerHTML=='Stop'){
+	    clearInterval(timeinterval);
+           }
+    }
+    update();
+    var timeinterval=setInterval(update,1000);
+}
+renew('clock');
+}
+function reset(){
+    var q=document.getElementById('clock');
+    minute=q.querySelector('.minutes');
+    second=q.querySelector('.seconds');
+    minute.innerHTML=document.getElementById('minutes').value;
+    second.innerHTML=document.getElementById('seconds').value;
+    document.getElementById("po").innerHTML='Begin Again!';
+}
+
+</script>
+</html>
+
