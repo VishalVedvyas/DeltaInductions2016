@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+p{
+    font-size:30px;
+    color:blue;
+}
+canvas {
+    border:1px solid blue;
+    background-color: black;
+}
+</style>
+</head>
+
+<body onload="begingame()">
+
+<script>
+var bot;
+var obstacles = [];
+var score;
+function begingame() {
+    bot = new comp(20, 20, "yellow", 20, 100);
+    bot.gravity = 0.05;
+    score = new comp("30px", "Consolas", "#4169E1", 20, 40, "text");
+    gameobj.start();
+}
+var gameobj = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 1500;
+        this.canvas.height = 540;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.framecount = 0;
+        updategameobj();
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+function comp(width, height, color, x, y, type) {
+    this.type = type;
+    this.score = 0;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;
+    this.gravity = 0;
+    this.gravitySpeed = 0;
+    this.update = function() {
+        ctx = gameobj.context;
+        if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    this.newPos = function() {
+        this.gravitySpeed += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY + this.gravitySpeed;
+        this.collapse();
+    }
+    this.collapse = function() {
+        var bed = gameobj.canvas.height - this.height;
+        if (this.y > bed) {
+            this.y = bed;
+            this.gravitySpeed = 0;
+        }
+	if (this.y < 0) {
+            this.y = 0;
+            this.gravitySpeed = 0;
+        }
+    }
+    this.ifhit = function(othercomp) {      //Tells if the rectangle has hit the obstacle.
+        var right = this.x + (this.width);
+        var top = this.y;
+        var bottom = this.y + (this.height);
+        var obstacleleft = othercomp.x;
+        var obstacletop = othercomp.y;
+        var obstaclebottom = othercomp.y + (othercomp.height);
+        var crash = true;
+        if ((bottom < obstacletop) || (top > obstaclebottom) || (right < obstacleleft)) {
+            crash = false;
+        }
+        return crash;
+    }
+}
+
+function updategameobj() {
+    var x, height, gap, minHeight, maxHeight, minGap, maxGap,wid;
+    for (i = 0; i < obstacles.length; i += 1) {
+        if (bot.ifhit(obstacles[i])) {
+	    document.getElementById("finish").innerHTML="Game Over!!";
+            return;
+        } 
+    }
+    gameobj.clear();
+    gameobj.framecount += 1;
+    if (gameobj.framecount == 1 || everyinterval(100)) {
+        x = 1400;    //obstacles pushed at x=1400.
+        minHeight = 40;
+        maxHeight = 400;
+        height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
+	wid= Math.floor(Math.random()*(40-10+1)+10);   //max thickness of obstacle=40,,min =10.
+        minGap = 100;
+        maxGap = 400;
+        gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
+        obstacles.push(new comp(wid, height, "#00FF7F", x, 0));
+        obstacles.push(new comp(wid, x - height - gap, "#00FF7F", x, height + gap));
+    }
+    for (i = 0; i < obstacles.length; i += 1) {
+        obstacles[i].x += -3;
+        obstacles[i].update();
+    }
+    score.text="SCORE: " + gameobj.framecount;
+    score.update();
+    bot.newPos();
+    bot.update();
+}
+function everyinterval(n) {
+    if ((gameobj.framecount / n) % 1 == 0) {return true;}
+    return false;
+}
+function accelerate(n) {
+    if (!gameobj.interval) {gameobj.interval = setInterval(updategameobj, 20);}
+    bot.gravity = n;
+}
+</script>
+<br>
+<br>
+<button onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)"><em>FLY</em></button>
+<p id="finish"></p>
+<p><em>Click FLY to start!!</em></p>
+<p><em>Use FLY to remain in air!!</em></p>
+<audio autoplay> 
+  <source src="109-mario-club-band.mp3">
+  <source src="109-mario-club-band.ogg">
+</audio>
+</body>
+</html>
